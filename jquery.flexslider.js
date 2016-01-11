@@ -692,6 +692,7 @@
             slider.currentItem = target;
             slider.slides.removeClass(namespace + "active-slide").eq(target).addClass(namespace + "active-slide");
             target = Math.floor(target/slider.visible);
+            return false;
           } else {
             slider.currentItem = target;
             slider.slides.removeClass(namespace + "active-slide").eq(target).addClass(namespace + "active-slide");
