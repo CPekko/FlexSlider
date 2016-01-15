@@ -673,6 +673,17 @@
     };
 
     // public methods
+    slider.setOpts = function(opts) {
+      for (var opt in opts) {
+        slider.vars[opt] = opts[opt];
+      }
+      slider.setup();
+    }
+    
+    slider.getOpts = function() {
+      return slider.vars;
+    }
+    
     slider.flexAnimate = function(target, pause, override, withSync, fromNav) {
       if (!slider.vars.animationLoop && target !== slider.currentSlide) {
         slider.direction = (target > slider.currentSlide) ? "next" : "prev";
