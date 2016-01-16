@@ -145,7 +145,7 @@
         if (touch && slider.vars.touch) { methods.touch(); }
 
         // FADE&&SMOOTHHEIGHT || SLIDE:
-        if (!fade || (fade && slider.vars.smoothHeight)) { $(window).bind("resize orientationchange focus", methods.resize); }
+        if (!fade || (fade && slider.vars.smoothHeight)) { $(window).bind("resize orientationchange", methods.resize); }
 
         slider.find("img").attr("draggable", "false");
 
@@ -574,9 +574,11 @@
             // SMOOTH HEIGHT:
             methods.smoothHeight();
           } else if (carousel) { //CAROUSEL:
-            slider.slides.width(slider.computedW);
-            slider.update(slider.pagingCount);
-            slider.setProps();
+            //slider.slides.width(slider.computedW);
+              //slider.update(slider.pagingCount);
+              slider.animatingTo = 0;
+              if (slider.vars.directionNav) methods.directionNav.update();
+            slider.setProps(slider.itemW, "jumpStart", 100);
           }
           else if (vertical) { //VERTICAL:
             slider.viewport.height(slider.h);
@@ -672,18 +674,18 @@
       }
     };
 
-    // public methods
-    slider.setOpts = function(opts) {
-      for (var opt in opts) {
-        slider.vars[opt] = opts[opt];
-      }
-      slider.setup();
+      // public methods
+    slider.setOpts = function (opts) {
+        for (var opt in opts) {
+            slider.vars[opt] = opts[opt];
+        }
+        slider.setup();
     }
-    
-    slider.getOpts = function() {
-      return slider.vars;
+
+    slider.getOpts = function () {
+        return slider.vars;
     }
-    
+
     slider.flexAnimate = function(target, pause, override, withSync, fromNav) {
       if (!slider.vars.animationLoop && target !== slider.currentSlide) {
         slider.direction = (target > slider.currentSlide) ? "next" : "prev";
@@ -870,7 +872,7 @@
     };
 
     // SLIDE:
-    slider.setProps = function(pos, special, dur) {
+    slider.setProps = function (pos, special, dur) {
       var target = (function() {
         var posCheck = (pos) ? pos : ((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.animatingTo,
             posCalc = (function() {
@@ -884,7 +886,7 @@
                   case "setTotal": return (reverse) ? ((slider.count - 1) - slider.currentSlide + slider.cloneOffset) * pos : (slider.currentSlide + slider.cloneOffset) * pos;
                   case "setTouch": return (reverse) ? pos : pos;
                   case "jumpEnd": return (reverse) ? pos : slider.count * pos;
-                  case "jumpStart": return (reverse) ? slider.count * pos : pos;
+                  case "jumpStart": return (reverse) ? slider.count * pos : 0;
                   default: return pos;
                 }
               }
@@ -1129,7 +1131,7 @@
     // Usability features
     pauseOnAction: true,            //Boolean: Pause the slideshow when interacting with control elements, highly recommended.
     pauseOnHover: false,            //Boolean: Pause the slideshow when hovering over slider, then resume when no longer hovering
-    pauseInvisible: true,   		//{NEW} Boolean: Pause the slideshow when tab is invisible, resume when visible. Provides better UX, lower CPU usage.
+    pauseInvisible: true,           //{NEW} Boolean: Pause the slideshow when tab is invisible, resume when visible. Provides better UX, lower CPU usage.
     useCSS: true,                   //{NEW} Boolean: Slider will use CSS3 transitions if available
     touch: true,                    //{NEW} Boolean: Allow touch swipe navigation of the slider on touch-enabled devices
     video: false,                   //{NEW} Boolean: If using video in the slider, will prevent CSS3 3D Transforms to avoid graphical glitches
