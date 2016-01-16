@@ -566,7 +566,7 @@
             }
         }
       },
-      resize: function() {
+      resize: function () {
         if (!slider.animating && slider.is(':visible')) {
           if (!carousel) { slider.doMath(); }
 
@@ -574,11 +574,15 @@
             // SMOOTH HEIGHT:
             methods.smoothHeight();
           } else if (carousel) { //CAROUSEL:
-            //slider.slides.width(slider.computedW);
-              //slider.update(slider.pagingCount);
-              slider.animatingTo = 0;
-              if (slider.vars.directionNav) methods.directionNav.update();
-            slider.setProps(slider.itemW, "jumpStart", 100);
+              if (vertical) {
+                  slider.slides.width(slider.computedW);
+                  slider.update(slider.pagingCount);
+                  slider.setProps();
+              } else{
+                  slider.animatingTo = 0;
+                  if (slider.vars.directionNav) methods.directionNav.update();
+                  slider.setProps(slider.itemW, "jumpStart", 100);
+              }
           }
           else if (vertical) { //VERTICAL:
             slider.viewport.height(slider.h);
@@ -886,7 +890,8 @@
                   case "setTotal": return (reverse) ? ((slider.count - 1) - slider.currentSlide + slider.cloneOffset) * pos : (slider.currentSlide + slider.cloneOffset) * pos;
                   case "setTouch": return (reverse) ? pos : pos;
                   case "jumpEnd": return (reverse) ? pos : slider.count * pos;
-                  case "jumpStart": return (reverse) ? slider.count * pos : 0;
+                  case "jumpStart": return (reverse) ? slider.count * pos : 
+                                           (vertical) ? pos : 0;
                   default: return pos;
                 }
               }
