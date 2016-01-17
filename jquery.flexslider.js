@@ -91,10 +91,10 @@
         slider.setup("init");
 
         // CONTROLNAV:
-        if (slider.vars.controlNav) { methods.controlNav.setup(); }
+        if (slider.vars.controlNav && ! $("." + namespace + 'control-nav', slider).length){ methods.controlNav.setup(); }
 
         // DIRECTIONNAV:
-        if (slider.vars.directionNav) { methods.directionNav.setup(); }
+        if (slider.vars.directionNav && !$("." + namespace + 'direction-nav', slider).length) { methods.directionNav.setup(); }
 
         // KEYBOARD:
         if (slider.vars.keyboard && ($(slider.containerSelector).length === 1 || slider.vars.multipleKeyboard)) {
@@ -117,7 +117,7 @@
         }
 
         // PAUSEPLAY
-        if (slider.vars.pausePlay) { methods.pausePlay.setup(); }
+        if (slider.vars.pausePlay && ! $("." + namespace + 'pauseplay', slider).length) { methods.pausePlay.setup(); }
 
         //PAUSE WHEN INVISIBLE
         if (slider.vars.slideshow && slider.vars.pauseInvisible) { methods.pauseInvisible.init(); }
@@ -301,7 +301,9 @@
       },
       directionNav: {
         setup: function() {
-          var directionNavScaffold = $('<ul class="' + namespace + 'direction-nav"><li class="' + namespace + 'nav-prev"><a class="' + namespace + 'prev" href="#">' + slider.vars.prevText + '</a></li><li class="' + namespace + 'nav-next"><a class="' + namespace + 'next" href="#">' + slider.vars.nextText + '</a></li></ul>');
+          var directionNavScaffold;
+          if ($("." + namespace + 'direction-nav', slider).length) directionNavScaffold = $("." + namespace + 'direction-nav', slider);
+          else directionNavScaffold = $('<ul class="' + namespace + 'direction-nav"><li class="' + namespace + 'nav-prev"><a class="' + namespace + 'prev" href="#">' + slider.vars.prevText + '</a></li><li class="' + namespace + 'nav-next"><a class="' + namespace + 'next" href="#">' + slider.vars.nextText + '</a></li></ul>');
 
           // CUSTOM DIRECTION NAV:
           if (slider.customDirectionNav) {
@@ -581,7 +583,7 @@
               } else{
                   slider.animatingTo = 0;
                   if (slider.vars.directionNav) methods.directionNav.update();
-                  slider.setProps(slider.itemW, "jumpStart", 100);
+                  slider.setProps(0, "jumpStart", 100);
               }
           }
           else if (vertical) { //VERTICAL:
@@ -678,16 +680,22 @@
       }
     };
 
-      // public methods
+    // public methods
     slider.setOpts = function (opts) {
         for (var opt in opts) {
             slider.vars[opt] = opts[opt];
         }
-        slider.setup();
+        methods.init();
     }
 
     slider.getOpts = function () {
         return slider.vars;
+    }
+
+    slider.updateDirectionNav = function () {
+        if (slider.vars.directionNav) {
+            methods.directionNav.update();
+        }
     }
 
     slider.flexAnimate = function(target, pause, override, withSync, fromNav) {
@@ -918,8 +926,8 @@
       if (!fade) {
         var sliderOffset, arr;
 
-        if (type === "init") {
-          slider.viewport = $('<div class="' + namespace + 'viewport"></div>').css({"overflow": "hidden", "position": "relative"}).appendTo(slider).append(slider.container);
+        if (type === "init" && ! $("." + namespace + 'viewport', slider).length) {
+            slider.viewport = $('<div class="' + namespace + 'viewport"></div>').css({ "overflow": "hidden", "position": "relative" }).appendTo(slider).append(slider.container);
           // INFINITE LOOP:
           slider.cloneCount = 0;
           slider.cloneOffset = 0;
@@ -1168,7 +1176,7 @@
     minItems: 1,                    //{NEW} Integer: Minimum number of carousel items that should be visible. Items will resize fluidly when below this.
     maxItems: 0,                    //{NEW} Integer: Maxmimum number of carousel items that should be visible. Items will resize fluidly when above this limit.
     move: 0,                        //{NEW} Integer: Number of carousel items that should move on animation. If 0, slider will move all visible items.
-    allowOneSlide: true,           //{NEW} Boolean: Whether or not to allow a slider comprised of a single slide
+    allowOneSlide: true,            //{NEW} Boolean: Whether or not to allow a slider comprised of a single slide
 
     // Callback API
     start: function(){},            //Callback: function(slider) - Fires when the slider loads the first slide
@@ -1176,8 +1184,8 @@
     after: function(){},            //Callback: function(slider) - Fires after each slider animation completes
     end: function(){},              //Callback: function(slider) - Fires when the slider reaches the last slide (asynchronous)
     added: function(){},            //{NEW} Callback: function(slider) - Fires after a slide is added
-    removed: function(){},           //{NEW} Callback: function(slider) - Fires after a slide is removed
-    init: function() {}             //{NEW} Callback: function(slider) - Fires after the slider is initially setup
+    removed: function(){},          //{NEW} Callback: function(slider) - Fires after a slide is removed
+    init: function(){},             //{NEW} Callback: function(slider) - Fires after the slider is initially setup
   };
 
   //FlexSlider: Plugin Function
